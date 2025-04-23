@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Writing Tools</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle">🌙 Dark Mode</button>
+
+    <div class="container">
+        <h2>🚀 Most Popular Tools</h2>
+        <p>These are the most popular tools. Click to start generating content.</p>
+
+        <div class="tool-boxes">
+            <div class="tool" onclick="navigateTo('article')">
+                <h3>📄 Article Generator</h3>
+                <p>Turn a title and an outline into a fully SEO-optimized article.</p>
+            </div>
+            <div class="tool" onclick="navigateTo('blog')">
+                <h3>📝 Blog Post Writer</h3>
+                <p>Quickly write quality blog posts with this AI-powered tool.</p>
+            </div>
+            <div class="tool" onclick="navigateTo('rewrite')">
+                <h3>🔄 Content Rewriter</h3>
+                <p>Rewrite text to make it unique and plagiarism-free.</p>
+            </div>
+            <div class="tool" onclick="navigateTo('paragraph')">
+                <h3>✍️ Paragraph Generator</h3>
+                <p>Generate paragraphs on any topic with a specific tone of voice.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function navigateTo(tool) {
+            window.location.href = "/generate/" + tool;
+        }
+
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById("theme-toggle");
+        const body = document.body;
+
+        // Check local storage for theme preference
+        const currentTheme = localStorage.getItem("theme");
+        if (currentTheme) {
+            body.classList.add(currentTheme);
+            if (currentTheme === "dark-theme") {
+                themeToggle.innerHTML = "🌞 Light Mode";
+            }
+        }
+
+        // Toggle theme on button click
+        themeToggle.addEventListener("click", () => {
+            if (body.classList.contains("dark-theme")) {
+                body.classList.remove("dark-theme");
+                body.classList.add("light-theme");
+                themeToggle.innerHTML = "🌙 Dark Mode";
+                localStorage.setItem("theme", "light-theme");
+            } else {
+                body.classList.remove("light-theme");
+                body.classList.add("dark-theme");
+                themeToggle.innerHTML = "🌞 Light Mode";
+                localStorage.setItem("theme", "dark-theme");
+            }
+        });
+    </script>
+
+</body>
+</html>

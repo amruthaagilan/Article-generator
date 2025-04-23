@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Content Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle">🌙 Dark Mode</button>
+
+    <div class="container">
+        <h2 id="page-title">🚀 {{ tool_type.replace('_', ' ').title() }}</h2>
+        <p id="page-description"></p>
+
+        <input type="text" id="topicInput" placeholder="Enter topic..." />
+        <button onclick="generateContent()">Generate</button>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        function generateContent() {
+    let topic = document.getElementById("topicInput").value.trim();
+    let outputDiv = document.getElementById("output");
+
+    if (!topic) {
+        outputDiv.innerHTML = "<p style='color: red;'>Please enter a topic.</p>";
+        return;
+    }
+
+    outputDiv.innerHTML = "<p>⏳ Generating content and image...</p>";
+
+    fetch("/generate-all", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+            topic: topic, 
+            tool_type: "{{ tool_type }}" 
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.error) {
+            outputDiv.innerHTML = `<p style='color: red;'>Error: ${data.error}</p>`;
+        } else {
+            let html = `<h3>Generated Content:</h3><p>${data.content}</p>`;
+            
+            if (data.image_url || data.image_base64) {
+                html += `<h3>Generated Image:</h3>
+                        <img src="${data.image_url || data.image_base64}" 
+                            style="max-width: 100%; border-radius: 8px; margin-top: 20px;"
+                            onerror="this.onerror=null;this.parentElement.innerHTML+='<p style=\'color: orange;\'>Image failed to load</p>';" />`;
+            } else {
+                html += `<p style='color: orange;'>Could not generate image (API limit may be reached)</p>`;
+            }
+            outputDiv.innerHTML = html;
+        }
+    })
+    .catch(error => {
+        outputDiv.innerHTML = `<p style='color: red;'>Error: ${error.message}</p>`;
+        console.error("Error:", error);
+    });
+}
+    </script>
+
+</body>
+</html>
